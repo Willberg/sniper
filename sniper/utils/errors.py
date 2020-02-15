@@ -2,8 +2,11 @@ CODE_SYS_UNKNOWN = 'SYS.0001'
 CODE_SYS_DB_ERROR = 'SYS.0002'
 CODE_SYS_CONNECTION_ERROR = 'SYS.0003'
 CODE_SYS_MONGO_ERROR = 'SYS.0004'
+CODE_SYS_PARAMETERS_ERROR = 'SYS.0005'
 
 CODE_WRONG_AUTHENTICATION_INFO = 'USER.0001'
+
+CODE_SNIPER_UPLOAD_URL_EXPIRE = 'SNIPER.0001'
 
 ERROR_CODES = {
     'SYS.0001': {
@@ -22,14 +25,22 @@ ERROR_CODES = {
         'CN': 'Mongo错误',
         'EN': 'Mongo error',
     },
+    'SYS.0005': {
+        'CN': '参数错误',
+        'EN': 'parameters error',
+    },
 
     'USER.0001': {
         'CN': '错误的账号或密码',
         'EN': 'wrong name or password',
-    }
+    },
 
+    'SNIPER.0001': {
+        'CN': '上传链接过期',
+        'EN': 'upload url expire',
+    },
 }
 
 
-def get_error_message(code, language):
+def get_error_message(code, language='EN'):
     return ERROR_CODES[code][language]

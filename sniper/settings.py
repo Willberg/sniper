@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'oss',
 ]
 
 MIDDLEWARE = [
@@ -118,10 +119,10 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 # 设置全局认证
-REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": ['sniper.utils.auth.Authentication', ],  # 里面写你的认证的类的路径
-    "DEFAULT_PERMISSION_CLASSES": ['sniper.utils.permission.SVIPPermission', ],  # 全局配置
-}
+# REST_FRAMEWORK = {
+#     "DEFAULT_AUTHENTICATION_CLASSES": ['sniper.utils.auth.Authentication', ],  # 里面写你的认证的类的路径
+#     "DEFAULT_PERMISSION_CLASSES": ['sniper.utils.permission.SVIPPermission', ],  # 全局配置
+# }
 
 # 从服务发现中心获取各项服务
 DROWRANGER_NAME = "drowranger_0001"
@@ -138,11 +139,9 @@ SESSION_SERVICE_NAME = 'am_0001'
 SESSION_COOKIE_NAME = "dsessionid"
 SESSION_SERVICE = DROWRANGER_SERVICE_DICTS[SESSION_SERVICE_NAME]
 
-# 设置全局认证
-REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": ['rtz.utils.auth.Authentication', ],  # 里面写你的认证的类的路径
-    "DEFAULT_PERMISSION_CLASSES": ['rtz.utils.permission.SVIPPermission', ],  # 全局配置
-}
+# sniper服务
+SNIPER_NAME = 'sniper_0001'
+SNIPER_SERVICE = DROWRANGER_SERVICE_DICTS[SNIPER_NAME]
 
 # mongo 设置
 MONGO_DB_NAME = 'sniper'
@@ -152,3 +151,21 @@ MONGO_USER_NAME = 'root'
 MONGO_PASSWORD = '123456'
 connect(db=MONGO_DB_NAME, host=MONGO_HOST, port=MONGO_PORT, username=MONGO_USER_NAME, password=MONGO_PASSWORD,
         authentication_source='admin')
+
+# redis在django中的配置
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://192.168.0.105:6379/3",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            # 压缩支持
+            "COMPRESSOR": "django_redis.compressors.zlib.ZlibCompressor",
+            # 配置默认连接池
+            "CONNECTION_POOL_KWARGS": {"max_connections": 100},
+            # json 序列化,默认是使用pickle直接将对象存入redis,改用json
+            "SERIALIZER": "django_redis.serializers.json.JSONSerializer",
+            "PASSWORD": "test123",
+        }
+    }
+}
