@@ -41,6 +41,7 @@ class OssView(APIView):
             browse_url = '%s:%s%s?key=%s' % (
                 SNIPER_SERVICE['domain'], str(SNIPER_SERVICE['port']), '/api/oss/v1/browse', str(od.id))
             result.data = {
+                'key': str(od.id),
                 'upload_url': upload_url,
                 'browse_url': browse_url
             }
@@ -124,5 +125,5 @@ class OssBrowseView(APIView):
         # 从mongo中取出文件
         oss_doc = OssDoc.objects().get(id=key)
         oss = oss_doc.oss.read()
-        content_type = CONTENT_TYPE[oss.content_type]
+        content_type = CONTENT_TYPE[oss_doc.content_type]
         return HttpResponse(oss, content_type=content_type)
