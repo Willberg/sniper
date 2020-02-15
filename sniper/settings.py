@@ -117,6 +117,12 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+# 设置全局认证
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": ['sniper.utils.auth.Authentication', ],  # 里面写你的认证的类的路径
+    "DEFAULT_PERMISSION_CLASSES": ['sniper.utils.permission.SVIPPermission', ],  # 全局配置
+}
+
 # 从服务发现中心获取各项服务
 DROWRANGER_NAME = "drowranger_0001"
 DROWRANGER_SECRET = "90cea09b4cf234a146a232a8e356e507"
