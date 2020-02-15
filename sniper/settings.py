@@ -13,8 +13,10 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+import requests
+from mongoengine import connect
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
@@ -25,8 +27,7 @@ SECRET_KEY = 'y3hfyql)dl5q^o8q+1zeepdzp^h+&2=3r%fd083*y@u)%n0*rb'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -37,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -69,17 +71,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'sniper.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
-
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -99,7 +99,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
@@ -113,8 +112,37 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# 从服务发现中心获取各项服务
+DROWRANGER_NAME = "drowranger_0001"
+DROWRANGER_SECRET = "90cea09b4cf234a146a232a8e356e507"
+DROWRANGER_SERVICE_URL = "http://127.0.0.1:10000/api/services/v1/list"
+headers = {
+    "service": DROWRANGER_NAME,
+    "secret": DROWRANGER_SECRET
+}
+DROWRANGER_SERVICE_DICTS = requests.get(DROWRANGER_SERVICE_URL, headers=headers).json()['data']
+
+# SESSION服务
+SESSION_SERVICE_NAME = 'am_0001'
+SESSION_COOKIE_NAME = "dsessionid"
+SESSION_SERVICE = DROWRANGER_SERVICE_DICTS[SESSION_SERVICE_NAME]
+
+# 设置全局认证
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": ['rtz.utils.auth.Authentication', ],  # 里面写你的认证的类的路径
+    "DEFAULT_PERMISSION_CLASSES": ['rtz.utils.permission.SVIPPermission', ],  # 全局配置
+}
+
+# mongo 设置
+MONGO_DB_NAME = 'sniper'
+MONGO_HOST = '192.168.0.105'
+MONGO_PORT = 27017
+MONGO_USER_NAME = 'root'
+MONGO_PASSWORD = '123456'
+connect(db=MONGO_DB_NAME, host=MONGO_HOST, port=MONGO_PORT, username=MONGO_USER_NAME, password=MONGO_PASSWORD,
+        authentication_source='admin')
