@@ -7,6 +7,7 @@ CODE_SYS_PARAMETERS_ERROR = 'SYS.0005'
 CODE_WRONG_AUTHENTICATION_INFO = 'USER.0001'
 
 CODE_SNIPER_UPLOAD_URL_EXPIRE = 'SNIPER.0001'
+CODE_SNIPER_FILE_NOT_EXISTS = 'SNIPER.0002'
 
 ERROR_CODES = {
     'SYS.0001': {
@@ -38,6 +39,10 @@ ERROR_CODES = {
     'SNIPER.0001': {
         'CN': '上传链接过期',
         'EN': 'upload url expire',
+    },
+    'SNIPER.0002': {
+        'CN': '文件不存在',
+        'EN': 'file not exists',
     },
 }
 

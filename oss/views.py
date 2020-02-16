@@ -9,7 +9,7 @@ from sniper.constant.content_types import CONTENT_TYPE
 from sniper.settings import SNIPER_SERVICE
 from sniper.utils.cache import create_key, CACHE_OSS
 from sniper.utils.errors import get_error_message, CODE_SYS_PARAMETERS_ERROR, CODE_SYS_MONGO_ERROR, \
-    CODE_SNIPER_UPLOAD_URL_EXPIRE, CODE_SYS_UNKNOWN
+    CODE_SNIPER_UPLOAD_URL_EXPIRE, CODE_SYS_UNKNOWN, CODE_SNIPER_FILE_NOT_EXISTS
 from sniper.utils.result import Result
 
 log = logging.getLogger('django')
@@ -104,9 +104,13 @@ class OssView(APIView):
             result.message = get_error_message(result.code)
             return JsonResponse(result.serializer())
 
-        oss_doc = OssDoc.objects().get(id=key)
-        if not oss_doc:
-            result.code = CODE_SYS_UNKNOWN
+        # 从mongo中取出文件
+        result = Result()
+        try:
+            oss_doc = OssDoc.objects().get(id=key)
+        except Exception as e:
+            log.debug(e)
+            result.code = CODE_SNIPER_FILE_NOT_EXISTS
             result.message = get_error_message(result.code)
             return JsonResponse(result.serializer())
 
@@ -123,7 +127,15 @@ class OssBrowseView(APIView):
         key = request.GET.get('key')
 
         # 从mongo中取出文件
-        oss_doc = OssDoc.objects().get(id=key)
+        result = Result()
+        try:
+            oss_doc = OssDoc.objects().get(id=key)
+        except Exception as e:
+            log.debug(e)
+            result.code = CODE_SNIPER_FILE_NOT_EXISTS
+            result.message = get_error_message(result.code)
+            return JsonResponse(result.serializer())
+
         oss = oss_doc.oss.read()
         content_type = CONTENT_TYPE[oss_doc.content_type]
         return HttpResponse(oss, content_type=content_type)
