@@ -22,10 +22,12 @@ class OssView(APIView):
     def get(request):
         result = Result()
         content_type = request.GET.get('content_type')
-        if not content_type or content_type not in CONTENT_TYPE.keys():
+        if not content_type or content_type.lower() not in CONTENT_TYPE.keys():
             result.code = CODE_SYS_PARAMETERS_ERROR
             result.message = get_error_message(result.code)
             return JsonResponse(result.serializer())
+
+        content_type = content_type.lower()
 
         # 秒为单位
         expire = request.GET.get('expire')
